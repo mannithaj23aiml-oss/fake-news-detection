@@ -68,10 +68,52 @@ if st.button("Predict Now"):
         fake_prob = probability[0]
         real_prob = probability[1]
 
+        # Animation CSS
+        st.markdown("""
+        <style>
+        @keyframes shake {
+            0% { transform: translateX(0px); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0px); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0px 0px 5px #2ecc71; }
+            50% { box-shadow: 0px 0px 20px #2ecc71; }
+            100% { box-shadow: 0px 0px 5px #2ecc71; }
+        }
+
+        .fake-box {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .real-box {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            animation: glow 1.2s ease-in-out;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Show animated result
         if prediction == 1:
-            st.markdown("<div class='result-box' style='background:#27ae60;color:white;'>REAL NEWS</div>", unsafe_allow_html=True)
+            st.markdown("<div class='real-box'>REAL NEWS</div>", unsafe_allow_html=True)
         else:
-            st.markdown("<div class='result-box' style='background:#e74c3c;color:white;'>FAKE NEWS</div>", unsafe_allow_html=True)
+            st.markdown("<div class='fake-box'>FAKE NEWS</div>", unsafe_allow_html=True)
 
         confidence = max(fake_prob, real_prob) * 100
         st.write(f"Confidence Score: {confidence:.2f}%")
