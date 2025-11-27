@@ -116,4 +116,13 @@ if st.button("Predict Now"):
             st.markdown("<div class='fake-box'>FAKE NEWS</div>", unsafe_allow_html=True)
 
         confidence = max(fake_prob, real_prob) * 100
-        st.write(f"Confidence Score: {confidence:.2f}%")
+        st.markdown(
+            f"""
+            <div style='background:white; color:black; padding:10px; 
+            border-radius:8px; width:fit-content; margin-top:10px;
+            font-weight:bold; border:1px solid #ccc;'>
+            Confidence Score: {confidence:.2f}%
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
