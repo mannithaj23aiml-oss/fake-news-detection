@@ -45,7 +45,7 @@ st.markdown(f"""
 # --------------------------------------------------
 
 # Header
-st.markdown("<div class='header-box'>Real Time Fake News Detection System</div>", unsafe_allow_html=True)
+st.markdown("<div class='header-box'>Fake News Detection System</div>", unsafe_allow_html=True)
 
 
 # Load model & vectorizer
