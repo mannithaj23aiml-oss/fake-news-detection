@@ -2,85 +2,76 @@ import pickle
 import numpy as np
 import streamlit as st
 
-st.set_page_config(page_title="Real Time Fake News Detection System", layout="centered")
+st.set_page_config(page_title="Real Time Fake News Detection System")
 
-# ------------------ PAGE STYLING ------------------
-st.markdown("""
-<style>
+# ------------------ BACKGROUND ------------------
+# GitHub raw image link
+BG_URL = "https://raw.githubusercontent.com/mannithaj23aiml-oss/fake-news-detection/main/Screenshot%202025-11-27%20163912.jpg"
 
-.stApp {
-    background-image: url("https://wallpaperaccess.com/full/1567665.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
-.overlay-box {
-    background: rgba(255,255,255,0.82);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 25px;
-    border-radius: 12px;
-    margin: auto;
-    width: 70%;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.25);
-}
-
-.title-text {
-    text-align: center;
-    font-size: 30px;
-    padding-bottom: 10px;
-    font-weight: 700;
-    color: #0a2e6c;
-}
-
-textarea {
-    background-color: rgba(255,255,255,0.9) !important;
-    border-radius: 10px !important;
-    border: 1px solid #cccccc !important;
-}
-
-button {
-    border-radius: 8px !important;
-}
-
-</style>
+st.markdown(f"""
+     <style>
+     .stApp {{
+         background-image: url("{BG_URL}");
+         background-size: cover;
+         background-position: center;
+         background-repeat: no-repeat;
+     }}
+     .header-box {{
+         background: rgba(10,46,108,0.90);
+         padding: 25px;
+         border-radius: 8px;
+         text-align: center;
+         color: white;
+         font-size: 28px;
+         font-weight: bold;
+         margin-bottom: 30px;
+         backdrop-filter: blur(4px);
+     }}
+     .textbox {{
+         background: rgba(255,255,255,0.85) !important;
+         border-radius: 10px;
+         padding: 10px;
+         backdrop-filter: blur(4px);
+     }}
+     .result-box {{
+         font-weight: bold;
+         padding: 12px;
+         border-radius: 8px;
+         text-align: center;
+         font-size: 20px;
+     }}
+     </style>
 """, unsafe_allow_html=True)
-
 # --------------------------------------------------
+
+# Header
+st.markdown("<div class='header-box'>Real Time Fake News Detection System</div>", unsafe_allow_html=True)
+
 
 # Load model & vectorizer
 model = pickle.load(open("model.pkl", "rb"))
 vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 
 
-# UI Layout Container
-with st.container():
-    st.markdown("<br><br>", unsafe_allow_html=True)
+# Input
+text = st.text_area("Enter news content here:", key="textbox", height=200)
 
-    st.markdown("<div class='overlay-box'>", unsafe_allow_html=True)
+# Predict
+if st.button("Predict Now"):
+    if len(text.strip()) < 20:
+        st.warning("Please enter a larger news text for analysis.")
+    else:
+        input_data = vectorizer.transform([text])
+        prediction = model.predict(input_data)[0]
+        probability = model.predict_proba(input_data)[0]
 
-    st.markdown("<div class='title-text'>Real Time Fake News Detection System</div>", unsafe_allow_html=True)
+        fake_prob = probability[0]
+        real_prob = probability[1]
 
-    text = st.text_area("Enter news content here:")
-
-    if st.button("Predict Now"):
-        if len(text.strip()) < 20:
-            st.warning("Please enter a longer text sample.")
+        if prediction == 1:
+            st.markdown("<div class='result-box' style='background:#27ae60;color:white;'>REAL NEWS</div>", unsafe_allow_html=True)
         else:
-            input_data = vectorizer.transform([text])
-            prediction = model.predict(input_data)[0]
-            probability = model.predict_proba(input_data)[0]
+            st.markdown("<div class='result-box' style='background:#e74c3c;color:white;'>FAKE NEWS</div>", unsafe_allow_html=True)
 
-            fake_prob = probability[0]
-            real_prob = probability[1]
-            confidence = max(fake_prob, real_prob) * 100
-
-            if prediction == 1:
-                st.success(f"REAL NEWS")
-            else:
-                st.error(f"FAKE NEWS")
-
-            st.write(f"Confidence Score: {confidence:.2f}%")
-
-    st.markdown("</div>", unsafe_allow_html=True)
+        confidence = max(fake_prob, real_prob) * 100
+        st.write(f"Confidence Score: {confidence:.2f}%")
