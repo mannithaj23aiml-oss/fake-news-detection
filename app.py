@@ -2,7 +2,7 @@ import pickle
 import numpy as np
 import streamlit as st
 
-st.set_page_config(page_title="Real Time Fake News Detection System")
+st.set_page_config(page_title="Fake News Detection System")
 
 # ------------------ BACKGROUND ------------------
 # GitHub raw image link
